@@ -127,7 +127,9 @@ using ClassLibrary;
 using System.Data.SqlClient;
 using Xunit;
 
-namespace Demo.Fixtures { [CollectionDefinition("LoginFixture")]
+namespace Demo.Fixtures { 
+
+  [CollectionDefinition("LoginFixture")]
   public class LoginFixture: IClassFixture < LoginFixture > 
   {
     //Initialise required classes and properties

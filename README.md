@@ -57,7 +57,7 @@ Serilog works with appsettings.json configuration tree. It can be configured lik
             {
               "Name": "File",
               "Args": {
-                "path": "C:\Sangeeth\AppLogs\log.txt",
+                "path": "C:\\Sangeeth\\AppLogs\\log.txt",
                 "rollingInterval": "Day",
                 "retainedFileCountLimit": 7,
                 "buffered": false

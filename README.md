@@ -1,6 +1,6 @@
 # Express.UnitTesting
 
-Express Unit testing is not a library. It's a template project structure for unit and integration testing on .NET Core by making use of XUnit framework
+Express Unit testing is not a library. It's a template project structure for unit and integration testing by making use of XUnit framework
 
 ![alt text](https://lh3.googleusercontent.com/proxy/B_7eIUlcSWIhijMsKkvsKeB4sv5ZqG8cOGXyWFKIrIAgPlQTL_RyHreEs5bCSthMBUgPzIuifuFL89mIzpZfMhA)
 

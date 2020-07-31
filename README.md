@@ -81,8 +81,9 @@ Serilog works with appsettings.json configuration tree. It can be configured lik
 | Args > RetainedFileCountLimit | Days after which logs can be cleared. Here it's 7 days after created, logs will be deleted
 | Args > Buffered | Enabling this will buffer logs and write whenever Log.CloseAndFlush(); is called. It has perfomance advantage but requires the programmer to call it once ready to log whatever buffered. This depends on programmers preference
 
-### Regestering Serilog
-Add this line to Program.cs
+### Adding Serilog To Program.cs
+Add this line to Program.cs.
+This step allows Serilog to be used anywhere on our project
 ```csharp
 .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
 ```
@@ -100,10 +101,6 @@ public class Program {
 ```
 ### Write logs
 Now you can write logs anywhere in the application
-```csharp
-.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
-```
-So the Program.cs looks like this
 ```csharp
 Log.Verbose("Verbose");
 Log.Debug("Debug");
@@ -126,4 +123,3 @@ This configuration gives clear and proper logging configuration. The output gene
 2020-07-31 15:38:26.570 +05:30 [ERR] Error
 2020-07-31 15:38:26.570 +05:30 [FTL] Fatal
 ```
-            

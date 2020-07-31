@@ -114,7 +114,7 @@ If buffered is "true" on appsettings.json. Donot forget to add this line wheneve
 Log.CloseAndFlush();
 ```
 ### Logs
-This configuration gives clear and proper logging configuration. The output generated file will look like this with the above configured "appsettings.json" configuration
+This configuration gives clear and proper log output. The output generated file will look like this with the above configured "appsettings.json" configuration
 ```text
 2020-07-31 15:38:26.562 +05:30 [VRB] Verbose
 2020-07-31 15:38:26.570 +05:30 [DBG] Debug

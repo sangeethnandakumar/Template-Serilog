@@ -9,25 +9,22 @@ This repo maintains 1 project which implements Serilog and its configurations fo
 
 ### PreRequesties
 Your project need to install the following Serilog nuget modules to configure logging. Install the following packages from nuget
+
 This module deals with core logging functionalities
 ```nuget
 Serilog.AspNetCore
 ```
-This module allows Serilog to read from appsettings.json for .NET Core projects
+This module allows Serilog to read from appsettings.json (For .NET Core projects)
 ```nuget
 Serilog.Settings.Configuration
 ```
-This is a wrapper sink that floats over other sinks and facilitate asynchronous logging which contributes significant perfomance advantage
+This is a wrapper sink that floats over other sinks and facilitate asynchronous logging. (Which contributes significant perfomance advantage)
 ```nuget
 Serilog.Sinks.Async
 ```
 File sink allows serilog to write to files
 ```nuget
 Serilog.Sinks.File
-```
-File sink allows serilog to write to console
-```nuget
-Serilog.Sinks.Console
 ```
 
 ### Configuration

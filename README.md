@@ -130,7 +130,7 @@ using Xunit;
 namespace Demo.Fixtures { 
 
   [CollectionDefinition("LoginFixture")]
-  public class LoginFixture: IClassFixture < LoginFixture > 
+  public class LoginFixture: IClassFixture < LoginFixture > , IDisposable
   {
     //Initialise required classes and properties
     public SqlConnection Db { get;  private set; }

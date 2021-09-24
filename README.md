@@ -1,5 +1,7 @@
 # Express.Logging
 
+### ❤️ MARK YOUR SUCCESS BY LEAVING A ⭐ STAR TO THIS REPOSITORY IF IT HELPS YOU ... ❤️
+
 Express Logging is not a library. It's an example of clear implementation of logging on .NET Core applications by making use of SeriLog and it's async writing feature to file sink.
 
 ![alt text](https://d585tldpucybw.cloudfront.net/sfimages/default-source/productsimages/justmock/justmock__net_770.png?sfvrsn=b4522579_1)

@@ -1,127 +1,263 @@
 # Express.Logging
 
-### ❤️ MARK YOUR SUCCESS BY LEAVING A ⭐ STAR TO THIS REPOSITORY IF IT HELPS YOU ... ❤️
-
 Express Logging is not a library. It's an example of clear implementation of logging on .NET Core applications by making use of SeriLog and it's async writing feature to file sink.
 
-![alt text](https://d585tldpucybw.cloudfront.net/sfimages/default-source/productsimages/justmock/justmock__net_770.png?sfvrsn=b4522579_1)
+![alt text](https://code.4noobz.net/wp-content/uploads/2021/10/serilog-logo.png)
 
 ### Repository Contents
 This repo maintains 1 project which implements Serilog and its configurations for clear and consise logging implementation.
 
-### PreRequesties
+# IMPLEMENTING IN - CONSOLE App
 Your project need to install the following Serilog nuget modules to configure logging. Install the following packages from nuget
 
-This module deals with core logging functionalities
-```nuget
-Serilog.AspNetCore
-```
-This module allows Serilog to read from appsettings.json (For .NET Core projects)
-```nuget
-Serilog.Settings.Configuration
-```
-This is a wrapper sink that floats over other sinks and facilitate asynchronous logging. (Which contributes significant perfomance advantage)
-```nuget
-Serilog.Sinks.Async
-```
-File sink allows serilog to write to files
-```nuget
-Serilog.Sinks.File
+## Step 1: Install Required NuGet Libraries
+Install the following NuGet packages
+```xml
+  <ItemGroup>
+    <PackageReference Include="Ben.Demystifier" Version="0.4.1" />
+    <PackageReference Include="Serilog" Version="2.11.0" />
+    <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+  </ItemGroup>
 ```
 
-### Configuration
-Different logging levels set in the appsettings.json will output logs in that or higher levels
-| Level | Name
-| ------ | ------
-| 0 | Verbose
-| 1 | Debug
-| 2 | Information
-| 3 | Warning
-| 4 | Error
-| 4 | Fatal
-### appsettings.json
-Serilog works with appsettings.json configuration tree. It can be configured like this
-```json
-{
-  "Serilog": {
-    "MinimumLevel": {
-      "Default": "Verbose",
-      "Override": {
-        "Microsoft": "Warning",
-        "System": "Error"
-      }
-    },
-    "WriteTo": [
-      {
-        "Name": "Async",
-        "Args": {
-          "configure": [
-            {
-              "Name": "File",
-              "Args": {
-                "path": "C:\\Sangeeth\\AppLogs\\log.txt",
-                "rollingInterval": "Day",
-                "retainedFileCountLimit": 7,
-                "buffered": false
-              }
-            }
-          ]
+## Step 2: Copy class 'Configure.cs'
+Copy the Configure.cs file to your app
+```csharp
+    public static class Configure
+    {
+        /// <summary>
+        /// Sets the logger up and running
+        /// </summary>
+        public static void Serilog()
+        {
+            const string OUTPUT_TEMPLATE = "{Timestamp:MM/dd/yyyy hh:mm:ss tt} [{Level}] {Message}{NewLine}{Exception}";
+            Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.Console(
+                outputTemplate: OUTPUT_TEMPLATE
+                )
+            .WriteTo.Async(x =>
+                x.File(@"D:\Logs\log.txt",
+                outputTemplate: OUTPUT_TEMPLATE,
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 10,
+                fileSizeLimitBytes: 20 * 1000000,
+                rollOnFileSizeLimit: true)
+            )
+            .CreateLogger();
         }
-      }
-    ]
-  },
-  "AllowedHosts": "*"
+
+        /// <summary>
+        /// Enrich exceptions with hints for better troubleshooting
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="hints"></param>
+        /// <param name="ex"></param>
+        /// <returns></returns>
+        public static string AddHints(this string message, object hints, Exception ex = null)
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+            var renderHints = JsonSerializer.Serialize(hints, new JsonSerializerOptions { WriteIndented = true });
+            var builder = new StringBuilder(message);
+            builder.Append("\nHints:");
+            builder.Append(renderHints.Substring(1, renderHints.Length - 2));
+            if (ex != null)
+            {
+                builder.Append("\nException:\n");
+                builder.Append(ex.Demystify().StackTrace);
+            }
+            builder.Append("\n------------------------------------------------------------------\n");
+            sw.Stop();
+            Console.WriteLine(sw.ElapsedMilliseconds);
+            return builder.ToString();
+        }
+    }
+```
+
+## Step 3: Setup Serilog
+Call Configure Serilog before anything
+```csharp
+    //Setup Logger
+    Configure.Serilog();
+```
+
+## Step 4: Implement Logger
+Implement the logger as follows
+```csharp
+	using Serilog;
+	
+	//Setup Logger
+	Configure.Serilog();
+	
+	//Write some usefull logs
+	Log.Information("Info error");
+	Log.Warning("Warning error");
+	
+	//Write some exception logs
+	try
+	{
+		Log.Information("Info error");
+		throw new StackOverflowException();
+	}
+	catch (Exception ex)
+	{
+		//Catch exceptions and write hints
+		Log.Error("An exception occured.".AddHints(
+			new
+			{
+				A = "Value of A",
+				B = "Value of B",
+				C = new { Fname = "Sangee", LName = "Nandakumar" }
+			}
+		, ex));
+	}
+	Console.Read();
+```
+
+# IMPLEMENTING IN - ASP.NET WebApp
+Your project need to install the following Serilog nuget modules to configure logging. Install the following packages from nuget
+
+## Step 1: Install Required NuGet Libraries
+Install the following NuGet packages
+```xml
+	<ItemGroup>
+		<PackageReference Include="Ben.Demystifier" Version="0.4.1" />
+		<PackageReference Include="Serilog.AspNetCore" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+	</ItemGroup>
+```
+
+## Step 2: Copy class 'Configure.cs'
+Copy the Configure.cs file to your app
+```csharp
+public static class Configure
+{
+    /// <summary>
+    /// Sets the logger up and running
+    /// </summary>
+    public static void Serilog(WebApplicationBuilder builder)
+    {
+        builder.Logging.ClearProviders();
+        const string OUTPUT_TEMPLATE = "{Timestamp:MM/dd/yyyy hh:mm:ss tt} [{Level}] {Message}{NewLine}{Exception}";
+        Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.Debug()
+        .WriteTo.Console(
+            outputTemplate: OUTPUT_TEMPLATE
+            )
+        .WriteTo.Async(x =>
+            x.File(@"D:\Logs\log.txt",
+            outputTemplate: OUTPUT_TEMPLATE,
+            rollingInterval: RollingInterval.Day,
+            retainedFileCountLimit: 10,
+            fileSizeLimitBytes: 20 * 1000000,
+            rollOnFileSizeLimit: true)
+        )
+        .CreateLogger();
+    }
+
+    /// <summary>
+    /// Enrich exceptions with hints for better troubleshooting
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="hints"></param>
+    /// <param name="ex"></param>
+    /// <returns></returns>
+    public static string AddHints(this string message, object hints, Exception ex = null)
+    {
+        var sw = new Stopwatch();
+        sw.Start();
+        var renderHints = JsonSerializer.Serialize(hints, new JsonSerializerOptions { WriteIndented = true });
+        var builder = new StringBuilder(message);
+        builder.Append("\nHints:");
+        builder.Append(renderHints.Substring(1, renderHints.Length - 2));
+        if (ex != null)
+        {
+            builder.Append("\nException:\n");
+            builder.Append(ex.Demystify().StackTrace);
+        }
+        builder.Append("\n------------------------------------------------------------------\n");
+        sw.Stop();
+        Console.WriteLine(sw.ElapsedMilliseconds);
+        return builder.ToString();
+    }
 }
 ```
-### Configuration Information
-| Key | Significance
-| ------ | ------
-| MinimumLevel > Default | During development this can be set to either "Verbose" or "Debug"
-| Override | Override is to limit logs emitted from other namespaces. "Warning" and "Error" correspondint to Microsoft and System is optimal in development and production scenerios
-| Args > Path | Location of log file
-| Args > RollingInterval | At what interval logs need to be rolled/archived. Now it's everyday
-| Args > RetainedFileCountLimit | Days after which logs can be cleared. Here it's 7 days after created, logs will be deleted
-| Args > Buffered | Enabling this will buffer logs and write whenever Log.CloseAndFlush(); is called. It has perfomance advantage but requires the programmer to call it once ready to log whatever buffered. This depends on programmers preference
 
-### Adding Serilog To Program.cs
-Add this line to Program.cs.
-This step allows Serilog to be used anywhere on our project
+## Step 3: Setup Serilog
+Wrap everything in Program.cs in 
 ```csharp
-.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
-```
-So the Program.cs looks like this
-```csharp
-public class Program {
-  public static void Main(string[] args) {
-    CreateHostBuilder(args).Build().Run();
-  }
+using Serilog;
+using WebApp;
 
-  public static IHostBuilder CreateHostBuilder(string[] args) =>Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>{
-    webBuilder.UseStartup < Startup > ();
-  }).UseSerilog((hostingContext, loggerConfiguration) =>loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
+    Configure.Serilog(builder);
+    builder.Services.AddControllers();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+    var app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+    app.UseHttpsRedirection();
+    app.UseAuthorization();
+    app.MapControllers();
+    app.Run();
+    return 0;
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Host terminated unexpectedly");
+    return 1;
+}
+finally
+{
+    Log.CloseAndFlush();
 }
 ```
-### Write logs
-Now you can write logs anywhere in the application
+
+## Step 4: Write logs
+Write logs anywhere
 ```csharp
-Log.Verbose("Verbose");
-Log.Debug("Debug");
-Log.Information("Information");
-Log.Warning("Warning");
-Log.Error("Error");
-Log.Fatal("Fatal");
-```
-If buffered is "true" on appsettings.json. Donot forget to add this line whenever logs need to be written.
-```csharp
-Log.CloseAndFlush();
-```
-### Logs
-This configuration gives clear and proper log output. The output generated file will look like this with the above configured "appsettings.json" configuration
-```text
-2020-07-31 15:38:26.562 +05:30 [VRB] Verbose
-2020-07-31 15:38:26.570 +05:30 [DBG] Debug
-2020-07-31 15:38:26.570 +05:30 [INF] Information
-2020-07-31 15:38:26.570 +05:30 [WRN] Warning
-2020-07-31 15:38:26.570 +05:30 [ERR] Error
-2020-07-31 15:38:26.570 +05:30 [FTL] Fatal
+    [ApiController]
+    [Route("[controller]")]
+    public class WeatherForecastController : ControllerBase
+    {
+        [HttpGet(Name = "GetWeatherForecast")]
+        public IActionResult Get()
+        {
+            Log.Debug("Some sample logs");
+            Log.Information("Some sample logs");
+            Log.Warning("Some sample logs");
+            try
+            {
+                throw new Exception("This is a test exception");
+            }
+            catch (Exception ex)
+            {
+                //Catch exceptions and write hints
+                Log.Error("An exception occured.".AddHints(
+                    new
+                    {
+                        A = "Value of A",
+                        B = "Value of B",
+                        C = new { Fname = "Sangee", LName = "Nandakumar" }
+                    }
+                    , ex));
+            }
+            finally
+            {
+            }
+            return Ok(1);
+        }
+    }
 ```

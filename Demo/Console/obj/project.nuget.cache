@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "bDsvIB0eFX3S8fBAhvGrRGrIj8Q5RGGQKkQLV9GprlG8kTFIqZ8dikZVzbMZdY+CNgKfh7f4tBshYosOA/73qA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Sangeeth Nandakumar\\source\\repos\\Express-SerilogLogging-Template\\Demo\\Console\\ConsoleApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Sangeeth Nandakumar\\.nuget\\packages\\ben.demystifier\\0.4.1\\ben.demystifier.0.4.1.nupkg.sha512",
+    "C:\\Users\\Sangeeth Nandakumar\\.nuget\\packages\\serilog\\2.11.0\\serilog.2.11.0.nupkg.sha512",
+    "C:\\Users\\Sangeeth Nandakumar\\.nuget\\packages\\serilog.sinks.async\\1.5.0\\serilog.sinks.async.1.5.0.nupkg.sha512",
+    "C:\\Users\\Sangeeth Nandakumar\\.nuget\\packages\\serilog.sinks.console\\4.0.1\\serilog.sinks.console.4.0.1.nupkg.sha512",
+    "C:\\Users\\Sangeeth Nandakumar\\.nuget\\packages\\serilog.sinks.file\\5.0.0\\serilog.sinks.file.5.0.0.nupkg.sha512",
+    "C:\\Users\\Sangeeth Nandakumar\\.nuget\\packages\\system.reflection.metadata\\5.0.0\\system.reflection.metadata.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

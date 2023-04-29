@@ -189,7 +189,12 @@ public static class Configure
 ```
 
 ## Step 3: Setup Serilog
-Wrap everything in Program.cs in 
+Wrap everything ina try-catch and add
+```csharp
+Configure.Serilog(builder);
+```
+after var builder = WebApplication.CreateBuilder(args);`
+
 ```csharp
 using Serilog;
 using WebApp;

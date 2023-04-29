@@ -138,7 +138,7 @@ Copy the Configure.cs file to your app
 ### If using Seq, Add this sink also
 ```csharp
  .WriteTo.Async(x =>
-                x.Seq("https://seq.twileloop.com", apiKey: "47yKIIsOmtzZBSkN74lW")
+                x.Seq("https://seq.twileloop.com", apiKey: "*****")
             )
 ```
 

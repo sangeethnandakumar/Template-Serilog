@@ -241,7 +241,13 @@ finally
 ```
 
 ## Step 4: Write logs
-Write logs anywhere
+
+## Write structured logs
+```
+Log.Information("Processed {@SensorInput} in {TimeMS:000} ms", new { Latitude = 25, Longitude = 134 }, 34);
+```
+
+## Write logs anywhere
 ```csharp
     [ApiController]
     [Route("[controller]")]

@@ -134,6 +134,14 @@ Install the following NuGet packages
 
 ## Step 2: Copy class 'Configure.cs'
 Copy the Configure.cs file to your app
+
+### If using Seq, Add this sink also
+```csharp
+ .WriteTo.Async(x =>
+                x.Seq("https://seq.twileloop.com", apiKey: "47yKIIsOmtzZBSkN74lW")
+            )
+```
+
 ```csharp
 public static class Configure
 {
@@ -194,6 +202,8 @@ Wrap everything ina try-catch and add
 Configure.Serilog(builder);
 ```
 after var builder = WebApplication.CreateBuilder(args);`
+
+### General configuration
 
 ```csharp
 using Serilog;

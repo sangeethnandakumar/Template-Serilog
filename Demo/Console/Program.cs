@@ -1,11 +1,34 @@
 ﻿using ConsoleApp;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Serilog;
+using static System.Net.Mime.MediaTypeNames;
 
 //Setup Logger
 Setup.Serilog();
 
-//Write some usefull logs
-Log.Information("Info error");
+
+//Dependency Injection Setup
+static void ConfigureServices(ServiceCollection services)
+{
+    services.AddSingleton<SeperateClass>();
+
+    var serilogLogger = new LoggerConfiguration()
+    .WriteTo.File("TheCodeBuzz.txt")
+    .CreateLogger();
+
+    services.AddLogging(builder =>
+    {
+        builder.SetMinimumLevel(LogLevel.Information);
+        builder.AddSerilog(logger: serilogLogger, dispose: true);
+    });
+}
+
+
+
+
+    //Write some usefull logs
+    Log.Information("Info error");
 Log.Warning("Warning error");
 
 //Write some exception logs
@@ -26,6 +49,5 @@ catch (Exception ex)
         }
         , ex));
 }
-
 
 Console.Read();

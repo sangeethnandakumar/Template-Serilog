@@ -1,7 +1,12 @@
 # Serilog ILogger Integration
 
 ### INSTALL
-Serilog, Serilog.Extensions.Logging, and Serilog.Sinks.Console
+```xml
+    <!-- LOGGING -->
+    <PackageReference Include="Serilog" Version="3.1.1" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+```
 
 ### CONFIGURE
 ```csharp
@@ -9,13 +14,15 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Serilog
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
-
 builder.Host.UseSerilog();
 
-var app = builder.Build();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 ```
 
 ### Inject And Use

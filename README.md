@@ -1,77 +1,103 @@
-# Serilog ILogger Integration
+# Structured Logging - Simplified
+This is a Serilog installation template that can work in tandem with Microsoft's `ILogger` interface and provides structured logging support
 
-### INSTALL
+![alt text](https://code.4noobz.net/wp-content/uploads/2021/10/serilog-logo.png)
+
+# IMPLEMENTING IN - WebAPIs
+## Install Packages
 ```xml
-    <!-- LOGGING -->
+    <!-- LOGGING PROVIDERS-->
     <PackageReference Include="Serilog" Version="3.1.1" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
+
+    <!-- LOGGING SINKS-->
     <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 ```
 
-### ADD THIS EXTENSION METHOD
+## Create An Extension Method `UseSerilogConfiguration()`
 ```csharp
 using Serilog;
 namespace Instaread.BestSellingScrapper.API.Extensions
 {
     public static class SerilogExtensions
     {
-        public static IHostBuilder AddSerilogSupport(this IHostBuilder builder)
+        public static IHostBuilder UseSerilogConfiguration(this IHostBuilder builder)
         {
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .CreateLogger();
-
-            return builder.UseSerilog();
+            builder.UseSerilog((context, services, configuration) =>
+            {
+                configuration.ReadFrom.Configuration(context.Configuration);
+            });
+            return builder;
         }
     }
 }
 ```
 
-### CONFIGURE
+## Call Extension Method From `Program.cs`
 ```csharp
 using Instaread.BestSellingScrapper.API.Extensions;
-using Twileloop.UOW.LiteDB.Support;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Serilog Support
-builder.Host.AddSerilogSupport();
+// Configure Serilog
+builder.Host.UseSerilogConfiguration();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 ```
 
-### Inject And Use
-```csharp
-public class MyController : ControllerBase
+## Lastly Put This In `appsettings.json`
+```json
 {
-    private readonly ILogger<MyController> _logger;
-
-    public MyController(ILogger<MyController> logger)
-    {
-        _logger = logger;
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.File" ],
+    "MinimumLevel": "Information",
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "outputTemplate": "{Timestamp:dd/MM/yy hh:mm:ss tt} [{Level:u3}] {Message}{NewLine}{Exception}"
+        }
+      },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/log.txt",
+          "rollingInterval": "Day",
+          "retainedFileCountLimit": 5,
+          "fileSizeLimitBytes": 20000000,
+          "rollOnFileSizeLimit": true,
+          "outputTemplate": "{Timestamp:dd/MM/yy hh:mm:ss tt} [{Level:u3}] {Message}{NewLine}{Exception}"
+        }
+      }
+    ],
+    "Properties": {
+      "Application": "Instaread.BestSellingScrapper.API"
     }
-
-    public IActionResult Get()
-    {
-        _logger.LogInformation("This is an information log");
-        return Ok();
-    }
+  }
 }
 ```
 
-### Structured Logging
+## Now Just Inject And Use `ILogger`
 ```csharp
-_logger.LogInformation("Processing order {OrderId}", orderId);
+[HttpGet(Name = "GetWeatherForecast")]
+public IEnumerable<WeatherForecast> Get()
+{
+    //Simple logging
+    _logger.LogDebug("This is a debug log");
+
+    //Structured Logging
+    _logger.LogInfo("It is very expensive at {Cost} rupees per piece", 120 );
+
+    //Structured Logging With JSON serializing
+    _logger.LogWarning("This data will get serialized on logs {@Data}", new { Name="Sangeeth" });
+
+    return data;
+}
 ```
-
-Express Logging is not a library. It's an example of clear implementation of logging on .NET Core applications by making use of SeriLog and it's async writing feature to file sink.
-
-![alt text](https://code.4noobz.net/wp-content/uploads/2021/10/serilog-logo.png)
-
-### Repository Contents
-This repo maintains 1 project which implements Serilog and its configurations for clear and consise logging implementation.
 
 # IMPLEMENTING IN - CONSOLE App
 Your project need to install the following Serilog nuget modules to configure logging. Install the following packages from nuget

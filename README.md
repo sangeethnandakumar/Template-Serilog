@@ -8,17 +8,34 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
 ```
 
-### CONFIGURE
+### ADD THIS EXTENSION METHOD
 ```csharp
 using Serilog;
+namespace Instaread.BestSellingScrapper.API.Extensions
+{
+    public static class SerilogExtensions
+    {
+        public static IHostBuilder AddSerilogSupport(this IHostBuilder builder)
+        {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            return builder.UseSerilog();
+        }
+    }
+}
+```
+
+### CONFIGURE
+```csharp
+using Instaread.BestSellingScrapper.API.Extensions;
+using Twileloop.UOW.LiteDB.Support;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Serilog
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateLogger();
-builder.Host.UseSerilog();
+// Add Serilog Support
+builder.Host.AddSerilogSupport();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -1,4 +1,46 @@
-# Express.Logging
+# Serilog ILogger Integration
+
+### INSTALL
+Serilog, Serilog.Extensions.Logging, and Serilog.Sinks.Console
+
+### CONFIGURE
+```csharp
+using Serilog;
+
+var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+var app = builder.Build();
+```
+
+### Inject And Use
+```csharp
+public class MyController : ControllerBase
+{
+    private readonly ILogger<MyController> _logger;
+
+    public MyController(ILogger<MyController> logger)
+    {
+        _logger = logger;
+    }
+
+    public IActionResult Get()
+    {
+        _logger.LogInformation("This is an information log");
+        return Ok();
+    }
+}
+```
+
+### Structured Logging
+```csharp
+_logger.LogInformation("Processing order {OrderId}", orderId);
+```
 
 Express Logging is not a library. It's an example of clear implementation of logging on .NET Core applications by making use of SeriLog and it's async writing feature to file sink.
 

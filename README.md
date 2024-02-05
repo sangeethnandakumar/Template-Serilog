@@ -54,7 +54,15 @@ builder.Services.AddSwaggerGen();
 {
   "Serilog": {
     "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.File" ],
-    "MinimumLevel": "Information",
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft.AspNetCore.Hosting": "Warning",
+        "Microsoft.AspNetCore.Mvc": "Warning",
+        "Microsoft.AspNetCore.Routing.EndpointMiddleware": "Warning",
+        "Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker": "Warning"
+      }
+    },
     "WriteTo": [
       {
         "Name": "Console",
